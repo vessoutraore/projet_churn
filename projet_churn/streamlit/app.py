@@ -42,6 +42,13 @@ SEXE_MAP = {"M": 0, "F": 1}
 ABO_MAP = {"Prépayé": 0, "Postpayé": 1}
 OUI_NON_MAP = {"Non": 0, "Oui": 1}
 
+MOYEN_PAIEMENT_MAP = {
+    "Mobile Money": 0,
+    "Carte Bancaire": 1,
+    "Virement": 2,
+    "Cash": 3
+}
+
 
 # =====================================================
 # 1. UN PEU DE STYLE
@@ -141,6 +148,9 @@ with tab_predict:
         anciennete = st.slider("Ancienneté (mois)", 1, 120, 24)
         type_abonnement = st.selectbox("Type d’abonnement", ["Prépayé", "Postpayé"])
 
+        # Sélection du moyen de paiement (Streamlit)
+        moyen_paiement = st.selectbox("Moyen de paiement",["Cash", "Mobile Money", "Carte bancaire", "Virement"])
+        
     with c3:
         forfait_international = st.selectbox("Forfait international", ["Oui", "Non"])
         messagerie_vocale = st.selectbox("Messagerie vocale", ["Oui", "Non"])
@@ -205,27 +215,28 @@ with tab_predict:
     if predict_btn:
         # Encodage simple des variables catégorielles
         x_vec = np.array(
-            [
-                REGION_MAP[region],
-                SEXE_MAP[sexe],
-                age,
-                revenu,
-                anciennete,
-                ABO_MAP[type_abonnement],
-                OUI_NON_MAP[forfait_international],
-                OUI_NON_MAP[messagerie_vocale],
-                recharge_mensuelle,
-                minutes_jour,
-                minutes_nuit,
-                donnees_mo,
-                nombre_sms,
-                appels_service_client,
-                pannes_signalees_30j,
-                retard_paiement_jours,
-                minutes_internationales,
-            ],
-            dtype=float,
-        ).reshape(1, -1)
+    [
+        REGION_MAP[region],                 # 1
+        SEXE_MAP[sexe],                     # 2
+        age,                                # 3
+        revenu,                             # 4
+        anciennete,                         # 5
+        ABO_MAP[type_abonnement],           # 6
+        OUI_NON_MAP[forfait_international], # 7
+        OUI_NON_MAP[messagerie_vocale],     # 8
+        recharge_mensuelle,                 # 9
+        MOYEN_PAIEMENT_MAP[moyen_paiement], # 10 ✅ AJOUT ICI
+        minutes_jour,                       # 11
+        minutes_nuit,                       # 12
+        minutes_internationales,            # 13
+        donnees_mo,                         # 14
+        nombre_sms,                         # 15
+        appels_service_client,              # 16
+        pannes_signalees_30j,                # 17
+        retard_paiement_jours,              # 18
+    ],
+    dtype=float,
+).reshape(1, -1)
 
         proba_churn = float(model.predict_proba(x_vec)[0, 1])
         pred = int(proba_churn >= 0.5)
