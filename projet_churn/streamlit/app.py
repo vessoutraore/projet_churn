@@ -149,8 +149,8 @@ with tab_predict:
         type_abonnement = st.selectbox("Type d’abonnement", ["Prépayé", "Postpayé"])
 
         # Sélection du moyen de paiement (Streamlit)
-        moyen_paiement = st.selectbox("Moyen de paiement",["Cash", "Mobile Money", "Carte bancaire", "Virement"])
-        
+        # use the same keys as MOYEN_PAIEMENT_MAP to avoid KeyError
+        moyen_paiement = st.selectbox("Moyen de paiement", list(MOYEN_PAIEMENT_MAP.keys()))
     with c3:
         forfait_international = st.selectbox("Forfait international", ["Oui", "Non"])
         messagerie_vocale = st.selectbox("Messagerie vocale", ["Oui", "Non"])
